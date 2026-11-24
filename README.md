@@ -20,7 +20,7 @@ Which one is Game A to G is hidden behind the Reveal button on the page, along w
 
 Every agent got the shared game brief shown on the page. The reveal records small test-URL wording differences. There were no follow-ups, no hints and no human edits. Each one could write files, run commands, open its own game in a browser and look at screenshots. The local runs used the Hermes agent in a sandbox with an offline browser.
 
-Each game folder under `round-7/` is the game exactly as its agent left it, plus the Three.js 0.187.0 files it loads (MIT license, included).
+Each game folder under `round-7-shuffle-2/` is the game exactly as its agent left it, plus the Three.js 0.187.0 files it loads (MIT license, included).
 
 ## Updating the comparison
 

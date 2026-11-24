@@ -107,7 +107,7 @@ function card(game) {
   const pick = guesses[l];
   const node = document.createElement("article");
   node.className = "card";
-  node.innerHTML = `<a class="preview" href="#play-${l}" aria-label="Play Game ${l}"><img alt="" src="round-7/${l.toLowerCase()}/preview.webp"><span class="chip">${l}</span></a>
+  node.innerHTML = `<a class="preview" href="#play-${l}" aria-label="Play Game ${l}"><img alt="" src="round-7-shuffle-2/${l.toLowerCase()}/preview.webp"><span class="chip">${l}</span></a>
     <div class="info"><div class="cardline"><h3>Game ${l}</h3><button class="fav" aria-label="Favorite Game ${l}" title="Favorite Game ${l}" aria-pressed="${favorite === l}">${favorite === l ? "\u2605" : "\u2606"}</button></div>
     <p class="meta"></p><div class="cardfoot"><a class="btn" href="#play-${l}" aria-label="Play Game ${l}">\u25b6 &nbsp;Play</a></div></div>`;
   node.querySelector(".fav").addEventListener("click", () => {

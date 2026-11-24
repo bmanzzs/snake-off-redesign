@@ -1,31 +1,31 @@
 const GAMES = [
   {
     letter: "A",
-    href: "round-7/a/index.html",
+    href: "round-7-shuffle-2/a/index.html",
   },
   {
     letter: "B",
-    href: "round-7/b/index.html",
+    href: "round-7-shuffle-2/b/index.html",
   },
   {
     letter: "C",
-    href: "round-7/c/index.html",
+    href: "round-7-shuffle-2/c/index.html",
   },
   {
     letter: "D",
-    href: "round-7/d/index.html",
+    href: "round-7-shuffle-2/d/index.html",
   },
   {
     letter: "E",
-    href: "round-7/e/index.html",
+    href: "round-7-shuffle-2/e/index.html",
   },
   {
     letter: "F",
-    href: "round-7/f/index.html",
+    href: "round-7-shuffle-2/f/index.html",
   },
   {
     letter: "G",
-    href: "round-7/g/snake/index.html",
+    href: "round-7-shuffle-2/g/snake/index.html",
   },
 ];
 const ROUND = "2026-11-seven-shuffle-2";
