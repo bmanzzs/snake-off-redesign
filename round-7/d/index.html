@@ -1,99 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3D Snake</title>
-<style>
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #0a0e1a; }
-  #app { position: fixed; inset: 0; }
-  #app canvas { display: block; }
-
-  .hud {
-    position: fixed; top: 16px; left: 16px; z-index: 5;
-    padding: 10px 18px 12px;
-    background: rgba(10, 14, 26, 0.55);
-    border: 1px solid rgba(120, 150, 255, 0.18);
-    border-radius: 14px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #e8f0ff;
-    font: 600 13px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
-    letter-spacing: 0.08em;
-    user-select: none;
-    text-shadow: 0 2px 8px rgba(0,0,0,.5);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Snake Game</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./node_modules/three/build/three.module.js"
+    }
   }
-  .hud .label { color: #8fa3c8; font-size: 11px; }
-  .hud #score { font-size: 34px; font-weight: 800; color: #7dffa0; line-height: 1.1; letter-spacing: 0; }
-  .hud #score.pop { animation: scorepop 0.28s ease; }
-  @keyframes scorepop { 40% { transform: scale(1.4); } }
-  .hud #best { font-size: 15px; color: #c9d6f2; font-weight: 700; }
-
-  .title {
-    position: fixed; top: 18px; right: 22px; z-index: 5;
-    color: rgba(232, 240, 255, 0.5);
-    font: 800 15px/1 system-ui, sans-serif;
-    letter-spacing: 0.35em;
-    user-select: none;
-  }
-
-  #help {
-    position: fixed; bottom: 14px; left: 0; right: 0; z-index: 5;
-    text-align: center;
-    color: rgba(232, 240, 255, 0.45);
-    font: 500 13px/1.4 system-ui, sans-serif;
-    letter-spacing: 0.05em;
-    user-select: none;
-    pointer-events: none;
-  }
-  #help kbd {
-    display: inline-block; padding: 1px 7px; margin: 0 2px;
-    border: 1px solid rgba(160, 180, 255, 0.35);
-    border-bottom-width: 2px; border-radius: 6px;
-    font: 600 11px/1.5 system-ui, sans-serif;
-    color: rgba(232, 240, 255, 0.8);
-    background: rgba(30, 40, 70, 0.5);
-  }
-
-  #overlay {
-    position: fixed; inset: 0; z-index: 10;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: rgba(5, 8, 16, 0.6);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    color: #fff; font-family: system-ui, sans-serif;
-    text-align: center;
-  }
-  #overlay[hidden] { display: none; }
-  #overlay h1 { margin: 0 0 6px; font-size: 54px; font-weight: 900; letter-spacing: 0.12em; color: #ff6b5e; text-shadow: 0 4px 30px rgba(255, 80, 60, 0.4); }
-  #overlay p { margin: 0 0 26px; font-size: 20px; color: #c9d6f2; }
-  #overlay button {
-    padding: 13px 34px; font: 700 16px/1 system-ui, sans-serif; letter-spacing: 0.04em;
-    color: #06210f; background: linear-gradient(180deg, #7dffa0, #3ed463);
-    border: none; border-radius: 999px; cursor: pointer;
-    box-shadow: 0 6px 24px rgba(62, 212, 99, 0.35);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
-  }
-  #overlay button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(62, 212, 99, 0.5); }
-</style>
+  </script>
 </head>
 <body>
-<div id="app"></div>
+  <div id="game-container">
+    <canvas id="three-canvas"></canvas>
 
-<div class="hud">
-  <div class="label">SCORE</div>
-  <div id="score">0</div>
-  <div class="label" style="margin-top:6px">BEST&nbsp;&nbsp;<span id="best">0</span></div>
-</div>
-<div class="title">3D&nbsp;SNAKE</div>
-<div id="help"><kbd>W A S D</kbd> or <kbd>&larr; &uarr; &darr; &rarr;</kbd> to steer &nbsp;&middot;&nbsp; <kbd>P</kbd> pause</div>
+    <!-- Top Score HUD -->
+    <header id="hud">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span id="score-val" class="hud-value">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">High Score</span>
+        <span id="high-score-val" class="hud-value">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Length</span>
+        <span id="length-val" class="hud-value">3</span>
+      </div>
+    </header>
 
-<div id="overlay" hidden>
-  <h1>GAME OVER</h1>
-  <p id="final">You scored 0</p>
-  <button id="restart">Play again</button>
-</div>
+    <!-- Controls Tip -->
+    <div id="controls-hint">
+      <span>Move:</span>
+      <div class="key-group">
+        <span class="key-badge">W</span>
+        <span class="key-badge">A</span>
+        <span class="key-badge">S</span>
+        <span class="key-badge">D</span>
+      </div>
+      <span>or</span>
+      <div class="key-group">
+        <span class="key-badge">▲</span>
+        <span class="key-badge">◄</span>
+        <span class="key-badge">▼</span>
+        <span class="key-badge">►</span>
+      </div>
+    </div>
 
-<script type="module" src="./game.js"></script>
+    <!-- Game Over Modal Overlay -->
+    <div id="game-over-screen">
+      <div class="modal-card">
+        <h1 class="modal-title">GAME OVER</h1>
+        <p class="modal-subtitle">The snake hit an obstacle!</p>
+        <div class="modal-stats">
+          <div class="stat-box">
+            <span class="stat-title">Final Score</span>
+            <span id="final-score" class="stat-number highlight">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-title">Best Score</span>
+            <span id="best-score" class="stat-number">0</span>
+          </div>
+        </div>
+        <button id="restart-btn" class="restart-btn">PLAY AGAIN</button>
+        <p class="restart-hint">Press <span class="key-badge">SPACE</span> or <span class="key-badge">ENTER</span> to restart</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>

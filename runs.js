@@ -1,7 +1,7 @@
 const GAMES = [
   {
     letter: "A",
-    href: "round-7/a/snake/index.html",
+    href: "round-7/a/index.html",
   },
   {
     letter: "B",
@@ -25,10 +25,10 @@ const GAMES = [
   },
   {
     letter: "G",
-    href: "round-7/g/index.html",
+    href: "round-7/g/snake/index.html",
   },
 ];
-const ROUND = "2026-11-seven-flash";
+const ROUND = "2026-11-seven-shuffle-2";
 const NAMES = {
   "gemini-flash": "Gemini 3.8 Flash (High)",
   gemma: "Gemma 4 31B, Ollama (local)",

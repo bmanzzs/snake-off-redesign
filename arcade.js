@@ -306,7 +306,7 @@ $("#pitch").textContent =
   " AI models got one prompt: build 3D Snake. Play their games blind. Can you tell who built which?";
 async function loadResults() {
   try {
-    const response = await fetch("results.json");
+    const response = await fetch("results.json?v=shuffle-2");
     if (!response.ok) throw new Error("Run data unavailable");
     const data = await response.json();
     if (

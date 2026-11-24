@@ -1,31 +1,33 @@
 {
   "A": {
-    "key": "sonnet-5.5",
-    "name": "Claude Sonnet 5.5",
+    "key": "gpt-5.6-terra",
+    "name": "GPT-5.6 Terra (high)",
     "where": "Cloud",
-    "maker": "Anthropic",
-    "harness": "Claude Code",
+    "maker": "OpenAI",
+    "harness": "Codex",
     "local": false,
     "stats": {
-      "wall_s": 569.9300000667572,
-      "model_s": 527.4059994220734,
-      "tool_s": 81.15800070762634,
-      "out_tokens": 79542,
-      "reasoning_tokens": 26089,
-      "eff_tps": 150.8173970094413,
-      "in_tokens": 9481895,
-      "peak_ctx": 195417,
-      "calls": 68,
-      "tool_calls": 154,
-      "screenshots": 31,
+      "wall_s": 337.0169999599457,
+      "model_s": 306.3649995326996,
+      "tool_s": 30.652000427246094,
+      "out_tokens": 11093,
+      "reasoning_tokens": 3086,
+      "eff_tps": 36.20844423129346,
+      "in_tokens": 1334563,
+      "peak_ctx": 74763,
+      "calls": 26,
+      "tool_calls": 25,
+      "screenshots": 6,
       "compactions": 0,
-      "commits": 7,
-      "code_kb": 36.5,
-      "code_lines": 1082
+      "commits": 3,
+      "code_kb": 14.0,
+      "code_lines": 203
     },
-    "prompt_changes": [],
+    "prompt_changes": [
+      "'http://localhost:8000/snake/index.html' -> 'the game'"
+    ],
     "engine": null,
-    "note": "Input includes cache reads and cache creation. Repeated transcript fragments were counted once per API response."
+    "note": "Model-active time is estimated from wall time minus the observed tool intervals. Its effective speed inherits that estimate. The 67-second wrong-folder attempt is excluded. Codex can group several operations in one tool call."
   },
   "B": {
     "key": "gemma",
@@ -56,6 +58,34 @@
     "engine": null
   },
   "C": {
+    "key": "opus-4.6",
+    "name": "Claude Opus 4.6",
+    "where": "Cloud",
+    "maker": "Anthropic",
+    "harness": "Claude Code",
+    "local": false,
+    "stats": {
+      "wall_s": 1253.3500001430511,
+      "model_s": 1158.4909994602203,
+      "tool_s": 85.6930022239685,
+      "out_tokens": 53511,
+      "reasoning_tokens": 22522,
+      "eff_tps": 46.19025959194553,
+      "in_tokens": 15335585,
+      "peak_ctx": 157646,
+      "calls": 134,
+      "tool_calls": 147,
+      "screenshots": 46,
+      "compactions": 0,
+      "commits": 2,
+      "code_kb": 23.0,
+      "code_lines": 629
+    },
+    "prompt_changes": [],
+    "engine": null,
+    "note": "Input includes cache reads and cache creation. Repeated transcript fragments were counted once per API response."
+  },
+  "D": {
     "key": "gemini-flash",
     "name": "Gemini 3.8 Flash (High)",
     "where": "Cloud",
@@ -107,7 +137,7 @@
       }
     ]
   },
-  "D": {
+  "E": {
     "key": "qwen-fast",
     "name": "Qwen 3.8 27B (fast)",
     "where": "Local: home NAS, V100-tuned llama.cpp, 6-bit",
@@ -142,7 +172,7 @@
     },
     "note": "Engine speeds below come from the original saved benchmark summary. The raw engine log was unavailable for the recheck."
   },
-  "E": {
+  "F": {
     "key": "inkling",
     "name": "Inkling 2 Mini 26B",
     "where": "Local: home NAS, V100-tuned llama.cpp, 4-bit",
@@ -177,59 +207,29 @@
       "draft_accept": 0.5784406013824265
     }
   },
-  "F": {
-    "key": "gpt-5.6-terra",
-    "name": "GPT-5.6 Terra (high)",
-    "where": "Cloud",
-    "maker": "OpenAI",
-    "harness": "Codex",
-    "local": false,
-    "stats": {
-      "wall_s": 337.0169999599457,
-      "model_s": 306.3649995326996,
-      "tool_s": 30.652000427246094,
-      "out_tokens": 11093,
-      "reasoning_tokens": 3086,
-      "eff_tps": 36.20844423129346,
-      "in_tokens": 1334563,
-      "peak_ctx": 74763,
-      "calls": 26,
-      "tool_calls": 25,
-      "screenshots": 6,
-      "compactions": 0,
-      "commits": 3,
-      "code_kb": 14.0,
-      "code_lines": 203
-    },
-    "prompt_changes": [
-      "'http://localhost:8000/snake/index.html' -> 'the game'"
-    ],
-    "engine": null,
-    "note": "Model-active time is estimated from wall time minus the observed tool intervals. Its effective speed inherits that estimate. The 67-second wrong-folder attempt is excluded. Codex can group several operations in one tool call."
-  },
   "G": {
-    "key": "opus-4.6",
-    "name": "Claude Opus 4.6",
+    "key": "sonnet-5.5",
+    "name": "Claude Sonnet 5.5",
     "where": "Cloud",
     "maker": "Anthropic",
     "harness": "Claude Code",
     "local": false,
     "stats": {
-      "wall_s": 1253.3500001430511,
-      "model_s": 1158.4909994602203,
-      "tool_s": 85.6930022239685,
-      "out_tokens": 53511,
-      "reasoning_tokens": 22522,
-      "eff_tps": 46.19025959194553,
-      "in_tokens": 15335585,
-      "peak_ctx": 157646,
-      "calls": 134,
-      "tool_calls": 147,
-      "screenshots": 46,
+      "wall_s": 569.9300000667572,
+      "model_s": 527.4059994220734,
+      "tool_s": 81.15800070762634,
+      "out_tokens": 79542,
+      "reasoning_tokens": 26089,
+      "eff_tps": 150.8173970094413,
+      "in_tokens": 9481895,
+      "peak_ctx": 195417,
+      "calls": 68,
+      "tool_calls": 154,
+      "screenshots": 31,
       "compactions": 0,
-      "commits": 2,
-      "code_kb": 23.0,
-      "code_lines": 629
+      "commits": 7,
+      "code_kb": 36.5,
+      "code_lines": 1082
     },
     "prompt_changes": [],
     "engine": null,

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07110e" />
+    <title>Verdant Snake</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="game-canvas" aria-label="3D Snake game"></canvas>
+      <section class="hud" aria-live="polite">
+        <div class="brand"><span class="brand-dot"></span>VERDANT SNAKE</div>
+        <div class="score-card"><span>SCORE</span><strong id="score">000</strong></div>
+      </section>
+      <section class="instructions">
+        <span>ARROWS / WASD</span><b>STEER THE SERPENT</b>
+      </section>
+      <section id="game-over" class="game-over" aria-hidden="true">
+        <div class="game-over-card">
+          <span class="eyebrow">THE TRAIL WENT COLD</span>
+          <h1>GAME OVER</h1>
+          <p>FINAL SCORE <strong id="final-score">000</strong></p>
+          <button id="restart" type="button">PLAY AGAIN <span>↻</span></button>
+          <small>PRESS SPACE TO RESTART</small>
+        </div>
+      </section>
+      <div class="vignette"></div>
+    </main>
+    <script type="module" src="game.js"></script>
+  </body>
+</html>
