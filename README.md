@@ -2,7 +2,7 @@
 
 Six AI coding agents got the same one-shot prompt: build a 3D snake game in Three.js. Play them blind, guess which AI made which, then hit Reveal.
 
-**Play it:** https://bmanzzs.github.io/snake-off/ (needs a keyboard: arrow keys or WASD)
+**Play it:** https://bmanzzs.github.io/snake-off-redesign/ (arrow keys, WASD, or touch steering)
 
 ## The contestants
 
@@ -20,3 +20,9 @@ Which one is Game A to F is hidden behind the Reveal button on the page, along w
 Every agent got the same prompt (shown on the page). There were no follow-ups, no hints and no human edits. Each one could write files, run commands, open its own game in a browser and look at screenshots. The local runs used the Hermes agent in a sandbox with an offline browser.
 
 Each folder `a` to `f` is the game exactly as its agent left it, plus the Three.js 0.187.0 files it loads (MIT license, included).
+
+## Updating the comparison
+
+This standalone redesign shares history with [the original experiment](https://github.com/bmanzzs/snake-off). GitHub Pages serves the root of `main` directly.
+
+When Gemini’s run is ready, place the original game in its anonymous folder. Update the letter/path list and the model choices in `runs.js`, the matching letter entries in `results.json`, and each thumbnail in `assets/game-<letter>.webp`. Shuffle the assignments together so returning visitors cannot identify the new model by elimination. Change `ROUND` for the new lineup to keep ballots from different rounds separate. Keep unavailable measurements as JSON null. The player, picker, score and table derive their size from the roster.

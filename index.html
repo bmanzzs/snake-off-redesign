@@ -1,259 +1,149 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Snake-Off</title>
-<meta name="description" content="Six AI coding agents, one prompt, one 3D snake game. Play them blind, guess who made which, then reveal.">
-<style>
-  :root {
-    --bg: #0b0f0d; --panel: #121915; --panel-2: #18211c; --line: #24322a;
-    --ink: #e8f2ec; --ink-2: #a9bcb1; --ink-3: #6f8578;
-    --accent: #5ee08a; --accent-ink: #08130c; --warn: #ffb547; --bad: #ff6b6b;
-    --radius: 14px;
-  }
-  * { box-sizing: border-box; }
-  html { background: var(--bg); }
-  body {
-    margin: 0; background: radial-gradient(1200px 600px at 50% -200px, #173322 0%, var(--bg) 70%);
-    color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    min-height: 100vh;
-  }
-  main { max-width: 1080px; margin: 0 auto; padding: 40px 16px 64px; }
-  h1 { font-size: clamp(40px, 8vw, 72px); line-height: 1; margin: 0 0 12px; letter-spacing: -0.03em; }
-  h1 span { color: var(--accent); }
-  h2 { font-size: 22px; margin: 40px 0 12px; }
-  .lede { font-size: 19px; color: var(--ink-2); max-width: 640px; margin: 0 0 24px; }
-  .rules { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--ink-2); font-size: 15px; margin: 0 0 28px; padding: 0; list-style: none; }
-  .rules li::before { content: "▸ "; color: var(--accent); }
-  details.prompt { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 32px; }
-  details.prompt summary { cursor: pointer; font-weight: 600; }
-  details.prompt blockquote { margin: 12px 0 4px; color: var(--ink-2); font-size: 15px; border-left: 3px solid var(--accent); padding-left: 14px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
-  .card {
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 18px; display: flex; flex-direction: column; gap: 12px; position: relative;
-  }
-  .card.fav { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 10px 40px -18px var(--accent); }
-  .letter { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
-  .who { min-height: 44px; font-size: 14px; color: var(--ink-3); }
-  .who b { display: block; color: var(--ink); font-size: 16px; }
-  .who .tag { display: inline-block; margin-top: 4px; font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--panel-2); color: var(--ink-2); }
-  .who .tag.local { background: #1d3a27; color: var(--accent); }
-  a.play {
-    display: block; text-align: center; text-decoration: none; font-weight: 700;
-    background: var(--accent); color: var(--accent-ink); padding: 10px; border-radius: 10px;
-  }
-  a.play:hover { filter: brightness(1.1); }
-  a.play:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  label.guess { font-size: 13px; color: var(--ink-3); display: flex; flex-direction: column; gap: 4px; }
-  select {
-    width: 100%; background: var(--panel-2); color: var(--ink); border: 1px solid var(--line);
-    border-radius: 8px; padding: 7px 8px; font: inherit; font-size: 14px;
-  }
-  .verdict { font-size: 13px; font-weight: 600; min-height: 1em; }
-  .verdict.ok { color: var(--accent); } .verdict.no { color: var(--bad); }
-  button {
-    font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line);
-    background: var(--panel-2); color: var(--ink); padding: 8px 12px;
-  }
-  button.fav-btn { font-size: 14px; color: var(--ink-2); }
-  .card.fav button.fav-btn { color: var(--accent); border-color: var(--accent); }
-  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin: 28px 0 0; }
-  button.reveal { background: var(--warn); color: #1d1300; border: 0; font-weight: 800; padding: 12px 22px; font-size: 17px; }
-  .score { font-size: 17px; font-weight: 700; }
-  .muted { color: var(--ink-3); font-size: 14px; }
-  .contestants { columns: 2 260px; color: var(--ink-2); padding-left: 20px; margin: 0; }
-  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
-  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; font-variant-numeric: tabular-nums; }
-  th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
-  th:first-child, td:first-child { text-align: left; color: var(--ink-2); position: sticky; left: 0; background: var(--panel); }
-  thead th { color: var(--ink); vertical-align: bottom; }
-  thead th small { display: block; color: var(--ink-3); font-weight: 400; }
-  tr.sub td:first-child { padding-left: 26px; color: var(--ink-3); }
-  td.best { color: var(--accent); font-weight: 700; }
-  tbody tr:last-child td { border-bottom: 0; }
-  .notes { color: var(--ink-2); font-size: 14px; padding-left: 20px; }
-  .notes li { margin: 4px 0; }
-  [hidden] { display: none !important; }
-  footer { margin-top: 48px; color: var(--ink-3); font-size: 13px; }
-</style>
-</head>
-<body>
-<main>
-  <h1>Snake<span>-</span>Off</h1>
-  <p class="lede">Six AI coding agents got the same one-shot prompt: build a 3D snake game. Three ran on a home server, three in the cloud. Play them blind, guess who made which, then reveal.</p>
-  <ul class="rules">
-    <li>Needs a keyboard: arrow keys or WASD</li>
-    <li>Pick your favorite with ★</li>
-    <li>Guess the AI for each game</li>
-    <li>Hit Reveal when you're done</li>
-  </ul>
-
-  <details class="prompt">
-    <summary>The prompt every agent got</summary>
-    <blockquote>Build a 3D Snake game in the snake folder. Use Three.js: install it with npm and load it from the folder, because your test browser has no internet. Make it look great: a 3D snake that moves smoothly and grows, an apple to eat, little touches like the apple spinning and bobbing and a burst of particles when it's eaten, a score, and a game-over screen with restart. Steer with the arrow keys or WASD. Plan it first, then build it in steps. After each step, open http://localhost:8000/snake/index.html in your browser, check the console for errors, take a screenshot and look at it, and fix anything that's wrong. Commit to git after each working step. When you're done, tell me what you built and how to play it.</blockquote>
-    <p class="muted">No follow-ups, no hints, no human edits. Each agent could write files, run commands, open its own game in a browser and look at screenshots.</p>
-  </details>
-
-  <div class="grid" id="grid"></div>
-
-  <div class="bar">
-    <button class="reveal" id="reveal">Reveal who made what</button>
-    <button id="hide" hidden>Hide again</button>
-    <span class="score" id="score"></span>
-  </div>
-
-  <h2>The contestants</h2>
-  <ul class="contestants">
-    <li>Gemma 4 31B on Ollama, 4-bit (local)</li>
-    <li>Qwen 3.8 27B on a V100-tuned llama.cpp, 6-bit (local)</li>
-    <li>Inkling 2 Mini 26B on a V100-tuned llama.cpp, 4-bit (local)</li>
-    <li>Claude Sonnet 5.5</li>
-    <li>Claude Opus 4.6</li>
-    <li>GPT-5.6 Terra (high)</li>
-  </ul>
-  <p class="muted">The three local runs used open-weights models on a home NAS with two Tesla V100s, through the Hermes agent, in a sandbox with an offline browser. The cloud models ran in their own coding apps (Claude Code, Codex).</p>
-
-  <section id="results" hidden>
-    <h2>The numbers</h2>
-    <div class="table-wrap"><table id="stats"></table></div>
-    <ul class="notes" id="notes"></ul>
-  </section>
-
-  <footer>Built Nov 2026. Each game is exactly as its agent left it, untouched.</footer>
-</main>
-
-<script>
-const GAMES = [{"letter": "A", "href": "a/index.html"}, {"letter": "B", "href": "b/index.html"}, {"letter": "C", "href": "c/index.html"}, {"letter": "D", "href": "d/index.html"}, {"letter": "E", "href": "e/snake/index.html"}, {"letter": "F", "href": "f/index.html"}];
-const BLOB = "eyJBIjogeyJrZXkiOiAiaW5rbGluZyIsICJuYW1lIjogIklua2xpbmcgMiBNaW5pIDI2QiIsICJ3aGVyZSI6ICJMb2NhbDogaG9tZSBOQVMsIFYxMDAtdHVuZWQgbGxhbWEuY3BwLCA0LWJpdCIsICJtYWtlciI6ICJUaGlua2luZyBNYWNoaW5lcyAob3BlbiB3ZWlnaHRzKSIsICJoYXJuZXNzIjogIkhlcm1lcyBBZ2VudCIsICJsb2NhbCI6IHRydWUsICJub3RlIjogInJhbiBvbiBvbmUgVjEwMCAoaXRzIGd1ZXNzLWFoZWFkIGRyYWZ0IG1vZGVsIG9uIHRoZSBzZWNvbmQpLCB3aXRoIGEgOTZrIGNvbnRleHQsIG9uIGxsYW1hLmNwcCB3aXRoIGNvbW11bml0eSBzcGVlZC11cCBrZXJuZWxzLiBUaGlzIGlzIGl0cyBzZWNvbmQgdHJ5OiB0aGUgZmlyc3QsIHdpdGggYSA2NGsgY29udGV4dCwgZ290IHN0dWNrIGNoYXNpbmcgYSBidWcgdGhhdCB3YXNuJ3QgdGhlcmUgYW5kIHdhcyBzdG9wcGVkIGFmdGVyIDI3IG1pbnV0ZXMuIEFkZGVkIGEgZGF5IGFmdGVyIHRoZSBmaXJzdCBmaXZlLiIsICJzdGF0cyI6IHsid2FsbF9zIjogMTc4Ny43OTIwNjEwOTA0Njk0LCAibW9kZWxfcyI6IDkyMC4wLCAidG9vbF9zIjogODY3Ljc5MjA2MTA5MDQ2OTQsICJvdXRfdG9rZW5zIjogNTA0ODYsICJyZWFzb25pbmdfdG9rZW5zIjogbnVsbCwgImVmZl90cHMiOiA1NC44NzYwODY5NTY1MjE3NCwgImluX3Rva2VucyI6IDM4NDU2MTgsICJwZWFrX2N0eCI6IDczNTEyLCAiY2FsbHMiOiA4OCwgInRvb2xfY2FsbHMiOiAxMDMsICJzY3JlZW5zaG90cyI6IDE4LCAiY29tcGFjdGlvbnMiOiAxLCAiY29tbWl0cyI6IDEsICJjb2RlX2tiIjogMTMuNiwgImNvZGVfbGluZXMiOiA0NDN9LCAicHJvbXB0X2NoYW5nZXMiOiBbXSwgImVuZ2luZSI6IHsicmVxdWVzdHMiOiA5OCwgImRlY29kZV90b2tlbnMiOiAxMDE3MjMsICJkZWNvZGVfdHBzIjogNjYuMTQ1ODY1MDU2OTYwMTMsICJwcm9tcHRfdG9rZW5zIjogMTEyODg2LCAicHJvbXB0X3RwcyI6IDg1OS4zNjk5MjY4MzMzNTE0LCAiZHJhZnRfYWNjZXB0IjogMC41Nzg0NDA2MDEzODI0MjY1fX0sICJCIjogeyJrZXkiOiAiZ3B0LTUuNi10ZXJyYSIsICJuYW1lIjogIkdQVC01LjYgVGVycmEgKGhpZ2gpIiwgIndoZXJlIjogIkNsb3VkIiwgIm1ha2VyIjogIk9wZW5BSSIsICJoYXJuZXNzIjogIkNvZGV4IiwgImxvY2FsIjogZmFsc2UsICJzdGF0cyI6IHsid2FsbF9zIjogMzM3LjAxNjk5OTk1OTk0NTcsICJtb2RlbF9zIjogMzA2LjM2NDk5OTUzMjY5OTYsICJ0b29sX3MiOiAzMC42NTIwMDA0MjcyNDYwOTQsICJvdXRfdG9rZW5zIjogMTEwOTMsICJyZWFzb25pbmdfdG9rZW5zIjogMzA4NiwgImVmZl90cHMiOiAzNi4yMDg0NDQyMzEyOTM0NiwgImluX3Rva2VucyI6IDEzMzQ1NjMsICJwZWFrX2N0eCI6IDc0NzYzLCAiY2FsbHMiOiAyNiwgInRvb2xfY2FsbHMiOiAyNSwgInNjcmVlbnNob3RzIjogNiwgImNvbXBhY3Rpb25zIjogMCwgImNvbW1pdHMiOiAzLCAiY29kZV9rYiI6IDE0LjAsICJjb2RlX2xpbmVzIjogMjAzfSwgInByb21wdF9jaGFuZ2VzIjogWyInaHR0cDovL2xvY2FsaG9zdDo4MDAwL3NuYWtlL2luZGV4Lmh0bWwnIC0+ICd0aGUgZ2FtZSciXSwgImVuZ2luZSI6IG51bGx9LCAiQyI6IHsia2V5IjogImdlbW1hIiwgIm5hbWUiOiAiR2VtbWEgNCAzMUIiLCAid2hlcmUiOiAiTG9jYWw6IGhvbWUgTkFTLCBPbGxhbWEsIDQtYml0IChRQVQpIiwgIm1ha2VyIjogIkdvb2dsZSAob3BlbiB3ZWlnaHRzKSIsICJoYXJuZXNzIjogIkhlcm1lcyBBZ2VudCIsICJsb2NhbCI6IHRydWUsICJub3RlIjogInJhbiBvbiBPbGxhbWEgYWNyb3NzIGJvdGggVjEwMHMgd2l0aCBhIDY0ayBjb250ZXh0LCBmcm9tIEdvb2dsZSdzIHF1YW50aXphdGlvbi1hd2FyZSA0LWJpdCBidWlsZCAoYWJvdXQgMzMgdG9rL3MpLiBJdCByZXBsYWNlZCBhIHNlY29uZCBRd2VuIDMuOCBydW4gYSBkYXkgYWZ0ZXIgdGhlIGZpcnN0IGZpdmUuIiwgInN0YXRzIjogeyJ3YWxsX3MiOiA5MDQuMjc3Mzg1NzExNjY5OSwgIm1vZGVsX3MiOiA4MTUuNiwgInRvb2xfcyI6IDg4LjY3NzM4NTcxMTY2OTksICJvdXRfdG9rZW5zIjogMTM5MzgsICJyZWFzb25pbmdfdG9rZW5zIjogbnVsbCwgImVmZl90cHMiOiAxNy4wODkyNTk0NDA5MDI0MDMsICJpbl90b2tlbnMiOiA2MDA3NDAsICJwZWFrX2N0eCI6IDMyNzg5LCAiY2FsbHMiOiAyOSwgInRvb2xfY2FsbHMiOiAyNiwgInNjcmVlbnNob3RzIjogNSwgImNvbXBhY3Rpb25zIjogMCwgImNvbW1pdHMiOiAyLCAiY29kZV9rYiI6IDkuOCwgImNvZGVfbGluZXMiOiAzMjl9LCAicHJvbXB0X2NoYW5nZXMiOiBbXSwgImVuZ2luZSI6IG51bGx9LCAiRCI6IHsia2V5IjogIm9wdXMtNC42IiwgIm5hbWUiOiAiQ2xhdWRlIE9wdXMgNC42IiwgIndoZXJlIjogIkNsb3VkIiwgIm1ha2VyIjogIkFudGhyb3BpYyIsICJoYXJuZXNzIjogIkNsYXVkZSBDb2RlIiwgImxvY2FsIjogZmFsc2UsICJzdGF0cyI6IHsid2FsbF9zIjogMTI1My4zNTAwMDAxNDMwNTExLCAibW9kZWxfcyI6IDExNTguNDkwOTk5NDYwMjIwMywgInRvb2xfcyI6IDg2LjAwOTAwMjIwODcwOTcyLCAib3V0X3Rva2VucyI6IDUzNTExLCAicmVhc29uaW5nX3Rva2VucyI6IDIyNTIyLCAiZWZmX3RwcyI6IDQ2LjE5MDI1OTU5MTk0NTUzLCAiaW5fdG9rZW5zIjogMTUzMzU1ODUsICJwZWFrX2N0eCI6IDE1NzY0NiwgImNhbGxzIjogMTM0LCAidG9vbF9jYWxscyI6IDE0NywgInNjcmVlbnNob3RzIjogMjMsICJjb21wYWN0aW9ucyI6IDAsICJjb21taXRzIjogMiwgImNvZGVfa2IiOiAyMy4wLCAiY29kZV9saW5lcyI6IDYyOX0sICJwcm9tcHRfY2hhbmdlcyI6IFtdLCAiZW5naW5lIjogbnVsbH0sICJFIjogeyJrZXkiOiAic29ubmV0LTUuNSIsICJuYW1lIjogIkNsYXVkZSBTb25uZXQgNS41IiwgIndoZXJlIjogIkNsb3VkIiwgIm1ha2VyIjogIkFudGhyb3BpYyIsICJoYXJuZXNzIjogIkNsYXVkZSBDb2RlIiwgImxvY2FsIjogZmFsc2UsICJzdGF0cyI6IHsid2FsbF9zIjogNTY5LjkzMDAwMDA2Njc1NzIsICJtb2RlbF9zIjogNTI3LjQwNTk5OTQyMjA3MzQsICJ0b29sX3MiOiAxMjIuODY0MDAwNTU4ODUzMTUsICJvdXRfdG9rZW5zIjogNzk1NDIsICJyZWFzb25pbmdfdG9rZW5zIjogMjYwODksICJlZmZfdHBzIjogMTUwLjgxNzM5NzAwOTQ0MTMsICJpbl90b2tlbnMiOiA5NDgxODk1LCAicGVha19jdHgiOiAxOTU0MTcsICJjYWxscyI6IDY4LCAidG9vbF9jYWxscyI6IDE1NCwgInNjcmVlbnNob3RzIjogMjcsICJjb21wYWN0aW9ucyI6IDAsICJjb21taXRzIjogNywgImNvZGVfa2IiOiAzNy40LCAiY29kZV9saW5lcyI6IDEwODJ9LCAicHJvbXB0X2NoYW5nZXMiOiBbXSwgImVuZ2luZSI6IG51bGx9LCAiRiI6IHsia2V5IjogInF3ZW4tZmFzdCIsICJuYW1lIjogIlF3ZW4gMy44IDI3QiAoZmFzdCkiLCAid2hlcmUiOiAiTG9jYWw6IGhvbWUgTkFTLCBWMTAwLXR1bmVkIGxsYW1hLmNwcCwgNi1iaXQiLCAibWFrZXIiOiAiQWxpYmFiYSAob3BlbiB3ZWlnaHRzKSIsICJoYXJuZXNzIjogIkhlcm1lcyBBZ2VudCIsICJsb2NhbCI6IHRydWUsICJzdGF0cyI6IHsid2FsbF9zIjogMTg2MS43MzEwNTA5NjgxNzAyLCAibW9kZWxfcyI6IDEzMzMuMSwgInRvb2xfcyI6IDUyOC42MzEwNTA5NjgxNzAzLCAib3V0X3Rva2VucyI6IDkzODE0LCAicmVhc29uaW5nX3Rva2VucyI6IG51bGwsICJlZmZfdHBzIjogNzAuMzcyODE1MjQyNjY3NDcsICJpbl90b2tlbnMiOiA1Mzc5NTYzLCAicGVha19jdHgiOiA5ODY5NSwgImNhbGxzIjogNzQsICJ0b29sX2NhbGxzIjogMTEzLCAic2NyZWVuc2hvdHMiOiAxNCwgImNvbXBhY3Rpb25zIjogMSwgImNvbW1pdHMiOiAzLCAiY29kZV9rYiI6IDE5LjIsICJjb2RlX2xpbmVzIjogNTkxfSwgInByb21wdF9jaGFuZ2VzIjogW10sICJlbmdpbmUiOiB7InJlcXVlc3RzIjogODYsICJkZWNvZGVfdG9rZW5zIjogMTI1MjgwLCAiZGVjb2RlX3RwcyI6IDExNy44NTAxODM0OTk4Mjg1NSwgInByb21wdF90b2tlbnMiOiA2NDc0NzksICJwcm9tcHRfdHBzIjogMTE1Ni40MjAzNjY1NjA4ODk1LCAiZHJhZnRfYWNjZXB0IjogMC40NTExMDkwODYyNDk2MDg1fX19";
-const NAMES = {
-  "gemma": "Gemma 4 31B, Ollama (local)",
-  "qwen-fast": "Qwen 3.8 27B, fast engine (local)",
-  "inkling": "Inkling 2 Mini 26B (local)",
-  "sonnet-5.5": "Claude Sonnet 5.5",
-  "opus-4.6": "Claude Opus 4.6",
-  "gpt-5.6-terra": "GPT-5.6 Terra",
-};
-const store = {
-  // "snakeoff7.": the letters were reshuffled when Inkling joined and Gemma replaced the Ollama Qwen, so older guesses don't carry over
-  get(k, d) { try { const v = localStorage.getItem("snakeoff7." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
-  set(k, v) { try { localStorage.setItem("snakeoff7." + k, JSON.stringify(v)); } catch {} },
-};
-let guesses = store.get("guesses", {});
-let fav = store.get("fav", null);
-let revealed = null;
-
-const grid = document.getElementById("grid");
-for (const g of GAMES) {
-  const card = document.createElement("article");
-  card.className = "card"; card.dataset.letter = g.letter;
-  const opts = ['<option value="">Who made it?</option>']
-    .concat(Object.entries(NAMES).map(([k, n]) => `<option value="${k}">${n}</option>`)).join("");
-  card.innerHTML = `
-    <div class="letter">${g.letter}</div>
-    <div class="who">Game ${g.letter}</div>
-    <a class="play" href="${g.href}">Play ▶</a>
-    <label class="guess">Your guess<select aria-label="Your guess for game ${g.letter}">${opts}</select></label>
-    <div class="verdict"></div>
-    <button class="fav-btn" type="button" aria-pressed="false">☆ My favorite</button>`;
-  const sel = card.querySelector("select");
-  sel.value = guesses[g.letter] || "";
-  sel.addEventListener("change", () => { guesses[g.letter] = sel.value; store.set("guesses", guesses); if (revealed) render(); });
-  card.querySelector(".fav-btn").addEventListener("click", () => { fav = fav === g.letter ? null : g.letter; store.set("fav", fav); render(); });
-  grid.appendChild(card);
-}
-
-function decode() {
-  const bytes = Uint8Array.from(atob(BLOB), c => c.charCodeAt(0));
-  return JSON.parse(new TextDecoder().decode(bytes));
-}
-
-const fmtTime = s => { s = Math.round(s); return `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, "0")}s`; };
-const fmtInt = n => n == null ? "n/a" : Math.round(n).toLocaleString("en-US");
-const fmtK = n => n == null ? "n/a" : n >= 1e6 ? (n / 1e6).toFixed(1) + "M" : Math.round(n / 1000) + "K";
-
-const ROWS = [
-  ["Build time", "wall_s", fmtTime, "min"],
-  ["waiting on the model", "model_s", fmtTime, null, true],
-  ["running tools (browser, npm, git)", "tool_s", fmtTime, null, true],
-  ["Tokens written", "out_tokens", fmtInt, null],
-  ["of which thinking", "reasoning_tokens", fmtInt, null, true],
-  ["Effective speed (tok/s)", "eff_tps", v => fmtInt(v), "max"],
-  ["Tokens read, all calls", "in_tokens", fmtK, null],
-  ["Biggest context", "peak_ctx", fmtK, null],
-  ["Model calls", "calls", fmtInt, null],
-  ["Tool calls", "tool_calls", fmtInt, null],
-  ["Screenshots looked at", "screenshots", fmtInt, null],
-  ["Context compactions", "compactions", fmtInt, null],
-  ["Git commits", "commits", fmtInt, null],
-  ["Code size", "code_kb", (v, s) => `${v} KB · ${fmtInt(s.code_lines)} lines`, null],
-];
-
-function render() {
-  let right = 0, answered = 0;
-  for (const card of grid.children) {
-    const L = card.dataset.letter, r = revealed && revealed[L];
-    card.classList.toggle("fav", fav === L);
-    const fb = card.querySelector(".fav-btn");
-    fb.textContent = fav === L ? "★ My favorite" : "☆ My favorite";
-    fb.setAttribute("aria-pressed", fav === L);
-    const who = card.querySelector(".who"), verdict = card.querySelector(".verdict");
-    if (r) {
-      who.innerHTML = `<b>${r.name}</b>${r.harness} <span class="tag ${r.local ? "local" : ""}">${r.local ? "local" : "cloud"}</span>`;
-      const gs = guesses[L];
-      if (gs) { answered++; if (gs === r.key) right++; }
-      verdict.className = "verdict " + (gs ? (gs === r.key ? "ok" : "no") : "");
-      verdict.textContent = gs ? (gs === r.key ? "✓ You got it" : "✗ Not quite") : "";
-    } else {
-      who.textContent = `Game ${L}`; verdict.textContent = ""; verdict.className = "verdict";
-    }
-  }
-  document.getElementById("score").textContent = revealed && answered ? `You guessed ${right} of ${GAMES.length} right` : "";
-  document.getElementById("results").hidden = !revealed;
-  document.getElementById("reveal").hidden = !!revealed;
-  document.getElementById("hide").hidden = !revealed;
-  if (revealed) renderStats();
-}
-
-function renderStats() {
-  const letters = GAMES.map(g => g.letter);
-  const cols = letters.map(L => revealed[L]);
-  let html = "<thead><tr><th></th>" + cols.map((c, i) =>
-    `<th>Game ${letters[i]}<small>${c.name}</small></th>`).join("") + "</tr></thead><tbody>";
-  for (const [label, key, fmt, best, sub] of ROWS) {
-    const vals = cols.map(c => c.stats[key]);
-    const nums = vals.filter(v => typeof v === "number");
-    const target = best === "min" ? Math.min(...nums) : best === "max" ? Math.max(...nums) : null;
-    html += `<tr class="${sub ? "sub" : ""}"><td>${label}</td>` + cols.map((c, i) => {
-      const v = vals[i];
-      return `<td class="${target !== null && v === target ? "best" : ""}">${v == null ? "n/a" : fmt(v, c.stats)}</td>`;
-    }).join("") + "</tr>";
-  }
-  document.getElementById("stats").innerHTML = html + "</tbody>";
-
-  const notes = [
-    "Effective speed is tokens written divided by time spent waiting on the model, so it also counts reading the prompt and network time. The cloud models' raw writing speed is higher than shown.",
-    "Each company counts tokens with its own tokenizer, so token numbers are close but not exact across models.",
-    "The local runs think out loud inside their output; that thinking isn't split out.",
-  ];
-  for (const L of letters) {
-    const r = revealed[L];
-    if (r.note) notes.push(`${r.name}: ${r.note}`);
-    if (r.engine) notes.push(`${r.name}: raw writing speed on the NAS was ${fmtInt(r.engine.decode_tps)} tok/s, reading ${fmtInt(r.engine.prompt_tps)} tok/s, with ${Math.round(100 * r.engine.draft_accept)}% of its guess-ahead (speculative) tokens accepted.`);
-    if (r.prompt_changes && r.prompt_changes.length) notes.push(`${r.name}: the test URL in the prompt was swapped for "the game", since its app had no server at that address. A 67-second false start (wrong folder) isn't counted. Codex also packs several actions into one tool call, so its tool count is low by design.`);
-  }
-  document.getElementById("notes").innerHTML = notes.map(n => `<li>${n}</li>`).join("");
-}
-
-document.getElementById("reveal").addEventListener("click", () => {
-  if (!confirm("Spoilers! Reveal which AI made each game?")) return;
-  revealed = decode(); store.set("revealed", true); render();
-  document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-document.getElementById("hide").addEventListener("click", () => { revealed = null; store.set("revealed", false); render(); });
-if (store.get("revealed", false)) revealed = decode();
-render();
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#10151b" />
+    <title>Snake-Off — The blind AI arcade</title>
+    <meta
+      name="description"
+      content="One prompt, six anonymous Snake games. Play the games, match each one to its AI model, and reveal the results."
+    />
+    <link rel="icon" href="assets/mark.svg" />
+    <link rel="stylesheet" href="arcade.css" />
+    <script defer src="runs.js"></script>
+    <script defer src="stats.js"></script>
+    <script defer src="arcade.js"></script>
+  </head>
+  <body>
+    <div id="lobby">
+      <header>
+        <nav class="wrap">
+          <a class="brand" href="#top"
+            ><img src="assets/mark.svg" alt="" />Snake-Off</a
+          >
+          <div class="links">
+            <a href="#arcade">The arcade</a
+            ><button data-prompt>The prompt</button
+            ><a
+              class="source"
+              href="https://github.com/bmanzzs/snake-off-redesign"
+              >GitHub</a
+            >
+          </div>
+        </nav>
+      </header>
+      <main id="top" class="wrap">
+        <section class="hero">
+          <div class="intro">
+            <span class="eyebrow"><i></i> BLIND AI PLAYTEST</span>
+            <h1>SNAKE<span>-OFF</span></h1>
+            <p id="pitch"></p>
+            <div class="actions">
+              <a class="btn primary" id="start" href="#play-A"
+                >▶ &nbsp; Start playtest</a
+              ><button class="btn quiet" data-prompt>Read the prompt</button>
+            </div>
+          </div>
+          <div class="art" aria-hidden="true">
+            <span class="cross tl">+</span><span class="cross tr">+</span
+            ><img src="assets/arcade.webp" alt="" /><span class="cross bl"
+              >+</span
+            ><span class="cross br">+</span>
+          </div>
+        </section>
+        <section id="arcade">
+          <div class="sectionhead">
+            <div><h2>The arcade</h2></div>
+            <div class="meter">
+              <span id="count"></span>
+              <div id="ticks"></div>
+            </div>
+          </div>
+          <p class="guide">
+            Play in any order. Pick a model for each game and star your
+            favorite.
+          </p>
+          <div id="games" class="cards"></div>
+          <div class="revealbar">
+            <div>
+              <h3 id="revealTitle">Ready for the reveal?</h3>
+              <p id="summary">
+                See who built each game and compare their runs.
+              </p>
+            </div>
+            <button class="btn primary" id="reveal"></button>
+          </div>
+        </section>
+        <section id="results" hidden>
+          <span class="eyebrow blue">BEHIND THE GAMES</span>
+          <h2>Run comparison</h2>
+          <div id="facts"></div>
+          <div
+            class="tablewrap"
+            tabindex="0"
+            role="region"
+            aria-label="Scrollable run comparison"
+          >
+            <table id="stats"></table>
+          </div>
+          <details>
+            <summary>How to read the numbers</summary>
+            <ul id="notes"></ul>
+          </details>
+        </section>
+        <footer>
+          <span class="brand"
+            ><img src="assets/mark.svg" alt="" />Snake-Off</span
+          ><span>One prompt · Built with Three.js</span
+          ><a href="#top">Back to top</a>
+        </footer>
+      </main>
+    </div>
+    <section id="player" hidden aria-label="Game player">
+      <div class="playerbar">
+        <a class="btn" href="#arcade">Back to arcade</a
+        ><strong id="playing"></strong
+        ><span class="steer">Arrow keys or WASD to steer</span
+        ><span class="flex"></span><button class="btn" id="pickInGame"></button
+        ><a class="btn primary" id="nextGame"></a>
+      </div>
+      <div id="screen"></div>
+      <div class="touchpad" aria-label="Touch steering">
+        <button data-key="Left" aria-label="Steer left">◀</button
+        ><button data-key="Up" aria-label="Steer up">▲</button
+        ><button data-key="Down" aria-label="Steer down">▼</button
+        ><button data-key="Right" aria-label="Steer right">▶</button>
+      </div>
+    </section>
+    <dialog id="dialog" aria-labelledby="dTitle">
+      <div class="dhead">
+        <span class="eyebrow blue" id="dKicker"></span
+        ><button class="close" aria-label="Close dialog">×</button>
+      </div>
+      <h2 id="dTitle"></h2>
+      <div id="dBody"></div>
+    </dialog>
+    <template id="prompt"
+      ><p>
+        Each agent could write files, run commands and inspect its game in a
+        browser. The published entries include three local runs on a dual-V100
+        home NAS.
+      </p>
+      <blockquote>
+        Build a 3D Snake game in the snake folder. Use Three.js: install it with
+        npm and load it from the folder, because your test browser has no
+        internet. Make it look great: a 3D snake that moves smoothly and grows,
+        an apple to eat, little touches like the apple spinning and bobbing and
+        a burst of particles when it's eaten, a score, and a game-over screen
+        with restart. Steer with the arrow keys or WASD. Plan it first, then
+        build it in steps. After each step, open
+        http://localhost:8000/snake/index.html in your browser, check the
+        console for errors, take a screenshot and look at it, and fix anything
+        that's wrong. Commit to git after each working step. When you're done,
+        tell me what you built and how to play it.
+      </blockquote>
+      <p>Run-specific details appear after the reveal.</p></template
+    >
+  </body>
 </html>
