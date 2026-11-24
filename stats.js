@@ -4,31 +4,24 @@ const fmtTime = (s) => {
 };
 const fmtInt = (n) =>
   n == null ? "n/a" : Math.round(n).toLocaleString("en-US");
-const fmtK = (n) =>
-  n == null
-    ? "n/a"
-    : n >= 1e6
-      ? (n / 1e6).toFixed(1) + "M"
-      : Math.round(n / 1000) + "K";
-
 const ROWS = [
   ["Build time", "wall_s", fmtTime, "min"],
-  ["waiting on the model", "model_s", fmtTime, null, true],
-  ["running tools (browser, npm, git)", "tool_s", fmtTime, null, true],
+  ["Model-active time", "model_s", fmtTime, null, true],
+  ["Tool-active time", "tool_s", fmtTime, null, true],
   ["Tokens written", "out_tokens", fmtInt, null],
   ["of which thinking", "reasoning_tokens", fmtInt, null, true],
   ["Effective speed (tok/s)", "eff_tps", (v) => fmtInt(v), "max"],
-  ["Tokens read, all calls", "in_tokens", fmtK, null],
-  ["Biggest context", "peak_ctx", fmtK, null],
+  ["Input tokens, all calls", "in_tokens", fmtInt, null],
+  ["Largest input, one call", "peak_ctx", fmtInt, null],
   ["Model calls", "calls", fmtInt, null],
   ["Tool calls", "tool_calls", fmtInt, null],
-  ["Screenshots looked at", "screenshots", fmtInt, null],
+  ["Screenshot returns / reviews", "screenshots", fmtInt, null],
   ["Context compactions", "compactions", fmtInt, null],
   ["Git commits", "commits", fmtInt, null],
   [
     "Code size",
     "code_kb",
-    (v, s) => `${v} KB · ${fmtInt(s.code_lines)} lines`,
+    (v, s) => `${v} KiB · ${fmtInt(s.code_lines)} lines`,
     null,
   ],
 ];
@@ -68,17 +61,42 @@ function renderStats() {
       cols
         .map((c, i) => {
           const v = vals[i];
-          return `<td class="${target !== null && v === target ? "best" : ""}">${v == null ? "n/a" : fmt(v, c.stats)}</td>`;
+          return `<td class="${target !== null && v === target ? "best" : ""}">${v == null ? "n/a" : (c.key === "gpt-5.6-terra" && ["model_s", "eff_tps"].includes(key) ? "≈ " : "") + fmt(v, c.stats)}</td>`;
         })
         .join("") +
       "</tr>";
   }
   document.getElementById("stats").innerHTML = html + "</tbody>";
 
+  const gemini = cols.find((run) => run.agents);
+  document.getElementById("agents").hidden = !gemini;
+  if (gemini) {
+    const rows = ROWS.filter(([, key]) => key in gemini.agents[0]);
+    document.getElementById("agentStats").innerHTML =
+      "<thead><tr><th>Metric</th>" +
+      gemini.agents.map((a) => "<th>" + a.name + "</th>").join("") +
+      "</tr></thead><tbody>" +
+      rows
+        .map(
+          ([label, key]) =>
+            "<tr><td>" +
+            label +
+            "</td>" +
+            gemini.agents
+              .map((a) => "<td>" + fmtInt(a[key]) + "</td>")
+              .join("") +
+            "</tr>",
+        )
+        .join("") +
+      "</tbody>";
+  }
+
   const notes = [
-    "Effective speed is tokens written divided by time spent waiting on the model, so it also counts reading the prompt and network time. The cloud models' raw writing speed is higher than shown.",
-    "Each company counts tokens with its own tokenizer, so token numbers are close but not exact across models.",
-    "The local runs think out loud inside their output; that thinking isn't split out.",
+    "Build time runs from the game prompt to the final answer. Model and tool times cover recorded activity. Parallel intervals within a category count once. Models and tools can overlap, and idle time can fall outside both.",
+    "Effective speed divides recorded output tokens by model-active seconds. It includes prompt processing and network waits. Gemini’s rate covers two agents working concurrently. Engine decode speed measures a different part of the run.",
+    "Input includes cached tokens where reported. Output includes thinking where reported. Tokenizers differ across providers. Hermes does not split reasoning from its output or include separate vision-helper tokens in its main API totals.",
+    "Screenshot returns count images delivered in browser or file-tool results, including automatic frames and repeat views. Hermes counts successful vision analyses. A capture on disk alone does not count.",
+    "Code size uses the final committed JavaScript, HTML and CSS, including development-server code. Dependencies and documentation are excluded.",
   ];
   for (const L of letters) {
     const r = revealed[L];
@@ -89,7 +107,7 @@ function renderStats() {
       );
     if (r.prompt_changes && r.prompt_changes.length)
       notes.push(
-        `${r.name}: the test URL in the prompt was swapped for "the game", since its app had no server at that address. A 67-second false start (wrong folder) isn't counted. Codex also packs several actions into one tool call, so its tool count is low by design.`,
+        `${r.name}: the prompt referred to “the game” in place of the localhost test URL.`,
       );
   }
   document.getElementById("notes").innerHTML = notes

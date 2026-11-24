@@ -1,13 +1,36 @@
 const GAMES = [
-  { letter: "A", href: "a/index.html" },
-  { letter: "B", href: "b/index.html" },
-  { letter: "C", href: "c/index.html" },
-  { letter: "D", href: "d/index.html" },
-  { letter: "E", href: "e/snake/index.html" },
-  { letter: "F", href: "f/index.html" },
+  {
+    letter: "A",
+    href: "round-7/a/snake/index.html",
+  },
+  {
+    letter: "B",
+    href: "round-7/b/index.html",
+  },
+  {
+    letter: "C",
+    href: "round-7/c/index.html",
+  },
+  {
+    letter: "D",
+    href: "round-7/d/index.html",
+  },
+  {
+    letter: "E",
+    href: "round-7/e/index.html",
+  },
+  {
+    letter: "F",
+    href: "round-7/f/index.html",
+  },
+  {
+    letter: "G",
+    href: "round-7/g/index.html",
+  },
 ];
-const ROUND = "2026-11-six-gemma";
+const ROUND = "2026-11-seven-flash";
 const NAMES = {
+  "gemini-flash": "Gemini 3.8 Flash (High)",
   gemma: "Gemma 4 31B, Ollama (local)",
   "qwen-fast": "Qwen 3.8 27B, fast engine (local)",
   inkling: "Inkling 2 Mini 26B (local)",

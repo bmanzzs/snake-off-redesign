@@ -1,5 +1,148 @@
 {
   "A": {
+    "key": "sonnet-5.5",
+    "name": "Claude Sonnet 5.5",
+    "where": "Cloud",
+    "maker": "Anthropic",
+    "harness": "Claude Code",
+    "local": false,
+    "stats": {
+      "wall_s": 569.9300000667572,
+      "model_s": 527.4059994220734,
+      "tool_s": 81.15800070762634,
+      "out_tokens": 79542,
+      "reasoning_tokens": 26089,
+      "eff_tps": 150.8173970094413,
+      "in_tokens": 9481895,
+      "peak_ctx": 195417,
+      "calls": 68,
+      "tool_calls": 154,
+      "screenshots": 31,
+      "compactions": 0,
+      "commits": 7,
+      "code_kb": 36.5,
+      "code_lines": 1082
+    },
+    "prompt_changes": [],
+    "engine": null,
+    "note": "Input includes cache reads and cache creation. Repeated transcript fragments were counted once per API response."
+  },
+  "B": {
+    "key": "gemma",
+    "name": "Gemma 4 31B",
+    "where": "Local: home NAS, Ollama, 4-bit (QAT)",
+    "maker": "Google (open weights)",
+    "harness": "Hermes Agent",
+    "local": true,
+    "note": "ran on Ollama across both V100s with a 64k context, from Google's quantization-aware 4-bit build. It replaced a second Qwen 3.8 run a day after the first five.",
+    "stats": {
+      "wall_s": 904.2773857116699,
+      "model_s": 703.1,
+      "tool_s": 194.47603130340576,
+      "out_tokens": 12127,
+      "reasoning_tokens": null,
+      "eff_tps": 17.247902147631915,
+      "in_tokens": 537543,
+      "peak_ctx": 30355,
+      "calls": 27,
+      "tool_calls": 26,
+      "screenshots": 4,
+      "compactions": 0,
+      "commits": 2,
+      "code_kb": 9.8,
+      "code_lines": 329
+    },
+    "prompt_changes": [],
+    "engine": null
+  },
+  "C": {
+    "key": "gemini-flash",
+    "name": "Gemini 3.8 Flash (High)",
+    "where": "Cloud",
+    "maker": "Google",
+    "harness": "Antigravity",
+    "local": false,
+    "stats": {
+      "wall_s": 2105.830129623413,
+      "model_s": 1741.42307472229,
+      "tool_s": 502.28783559799194,
+      "calls": 191,
+      "tool_calls": 198,
+      "in_tokens": 7487368,
+      "peak_ctx": 76214,
+      "out_tokens": 142562,
+      "reasoning_tokens": 85054,
+      "eff_tps": 81.86522969022607,
+      "compactions": 6,
+      "screenshots": 121,
+      "commits": 5,
+      "code_lines": 1615,
+      "code_kb": 43.2
+    },
+    "prompt_changes": [
+      "'http://localhost:8000/snake/index.html' -> 'the game'"
+    ],
+    "note": "Totals include the coding agent and its browser tester. The sandbox saved 118 captures. The trajectories returned 121 screenshot images, including repeat reads. One dispatched tool step lacked a completion timestamp and contributes no tool duration.",
+    "engine": null,
+    "agents": [
+      {
+        "name": "Coding agent",
+        "calls": 54,
+        "tool_calls": 65,
+        "in_tokens": 2276965,
+        "out_tokens": 38605,
+        "reasoning_tokens": 11662,
+        "screenshots": 4,
+        "compactions": 0
+      },
+      {
+        "name": "Browser tester",
+        "calls": 137,
+        "tool_calls": 133,
+        "in_tokens": 5210403,
+        "out_tokens": 103957,
+        "reasoning_tokens": 73392,
+        "screenshots": 117,
+        "compactions": 6
+      }
+    ]
+  },
+  "D": {
+    "key": "qwen-fast",
+    "name": "Qwen 3.8 27B (fast)",
+    "where": "Local: home NAS, V100-tuned llama.cpp, 6-bit",
+    "maker": "Alibaba (open weights)",
+    "harness": "Hermes Agent",
+    "local": true,
+    "stats": {
+      "wall_s": 1861.7310509681702,
+      "model_s": 1317.3,
+      "tool_s": 453.23017263412476,
+      "out_tokens": 92559,
+      "reasoning_tokens": null,
+      "eff_tps": 70.26417672511957,
+      "in_tokens": 5280868,
+      "peak_ctx": 98229,
+      "calls": 73,
+      "tool_calls": 90,
+      "screenshots": 11,
+      "compactions": 1,
+      "commits": 3,
+      "code_kb": 19.2,
+      "code_lines": 591
+    },
+    "prompt_changes": [],
+    "engine": {
+      "requests": 86,
+      "decode_tokens": 125280,
+      "decode_tps": 117.85018349982855,
+      "prompt_tokens": 647479,
+      "prompt_tps": 1156.4203665608895,
+      "draft_accept": 0.4511090862496085
+    },
+    "note": "Engine speeds below come from the original saved benchmark summary. The raw engine log was unavailable for the recheck."
+  },
+  "E": {
     "key": "inkling",
     "name": "Inkling 2 Mini 26B",
     "where": "Local: home NAS, V100-tuned llama.cpp, 4-bit",
@@ -9,16 +152,16 @@
     "note": "ran on one V100 (its guess-ahead draft model on the second), with a 96k context, on llama.cpp with community speed-up kernels. This is its second try: the first, with a 64k context, got stuck chasing a bug that wasn't there and was stopped after 27 minutes. Added a day after the first five.",
     "stats": {
       "wall_s": 1787.7920610904694,
-      "model_s": 920.0,
-      "tool_s": 867.7920610904694,
-      "out_tokens": 50486,
+      "model_s": 796.9,
+      "tool_s": 833.0588622093201,
+      "out_tokens": 44002,
       "reasoning_tokens": null,
-      "eff_tps": 54.87608695652174,
-      "in_tokens": 3845618,
+      "eff_tps": 55.2164637972142,
+      "in_tokens": 3476307,
       "peak_ctx": 73512,
-      "calls": 88,
-      "tool_calls": 103,
-      "screenshots": 18,
+      "calls": 82,
+      "tool_calls": 81,
+      "screenshots": 13,
       "compactions": 1,
       "commits": 1,
       "code_kb": 13.6,
@@ -34,7 +177,7 @@
       "draft_accept": 0.5784406013824265
     }
   },
-  "B": {
+  "F": {
     "key": "gpt-5.6-terra",
     "name": "GPT-5.6 Terra (high)",
     "where": "Cloud",
@@ -61,37 +204,10 @@
     "prompt_changes": [
       "'http://localhost:8000/snake/index.html' -> 'the game'"
     ],
-    "engine": null
+    "engine": null,
+    "note": "Model-active time is estimated from wall time minus the observed tool intervals. Its effective speed inherits that estimate. The 67-second wrong-folder attempt is excluded. Codex can group several operations in one tool call."
   },
-  "C": {
-    "key": "gemma",
-    "name": "Gemma 4 31B",
-    "where": "Local: home NAS, Ollama, 4-bit (QAT)",
-    "maker": "Google (open weights)",
-    "harness": "Hermes Agent",
-    "local": true,
-    "note": "ran on Ollama across both V100s with a 64k context, from Google's quantization-aware 4-bit build (about 33 tok/s). It replaced a second Qwen 3.8 run a day after the first five.",
-    "stats": {
-      "wall_s": 904.2773857116699,
-      "model_s": 815.6,
-      "tool_s": 88.6773857116699,
-      "out_tokens": 13938,
-      "reasoning_tokens": null,
-      "eff_tps": 17.089259440902403,
-      "in_tokens": 600740,
-      "peak_ctx": 32789,
-      "calls": 29,
-      "tool_calls": 26,
-      "screenshots": 5,
-      "compactions": 0,
-      "commits": 2,
-      "code_kb": 9.8,
-      "code_lines": 329
-    },
-    "prompt_changes": [],
-    "engine": null
-  },
-  "D": {
+  "G": {
     "key": "opus-4.6",
     "name": "Claude Opus 4.6",
     "where": "Cloud",
@@ -101,7 +217,7 @@
     "stats": {
       "wall_s": 1253.3500001430511,
       "model_s": 1158.4909994602203,
-      "tool_s": 86.00900220870972,
+      "tool_s": 85.6930022239685,
       "out_tokens": 53511,
       "reasoning_tokens": 22522,
       "eff_tps": 46.19025959194553,
@@ -109,74 +225,14 @@
       "peak_ctx": 157646,
       "calls": 134,
       "tool_calls": 147,
-      "screenshots": 23,
+      "screenshots": 46,
       "compactions": 0,
       "commits": 2,
       "code_kb": 23.0,
       "code_lines": 629
     },
     "prompt_changes": [],
-    "engine": null
-  },
-  "E": {
-    "key": "sonnet-5.5",
-    "name": "Claude Sonnet 5.5",
-    "where": "Cloud",
-    "maker": "Anthropic",
-    "harness": "Claude Code",
-    "local": false,
-    "stats": {
-      "wall_s": 569.9300000667572,
-      "model_s": 527.4059994220734,
-      "tool_s": 122.86400055885315,
-      "out_tokens": 79542,
-      "reasoning_tokens": 26089,
-      "eff_tps": 150.8173970094413,
-      "in_tokens": 9481895,
-      "peak_ctx": 195417,
-      "calls": 68,
-      "tool_calls": 154,
-      "screenshots": 27,
-      "compactions": 0,
-      "commits": 7,
-      "code_kb": 37.4,
-      "code_lines": 1082
-    },
-    "prompt_changes": [],
-    "engine": null
-  },
-  "F": {
-    "key": "qwen-fast",
-    "name": "Qwen 3.8 27B (fast)",
-    "where": "Local: home NAS, V100-tuned llama.cpp, 6-bit",
-    "maker": "Alibaba (open weights)",
-    "harness": "Hermes Agent",
-    "local": true,
-    "stats": {
-      "wall_s": 1861.7310509681702,
-      "model_s": 1333.1,
-      "tool_s": 528.6310509681703,
-      "out_tokens": 93814,
-      "reasoning_tokens": null,
-      "eff_tps": 70.37281524266747,
-      "in_tokens": 5379563,
-      "peak_ctx": 98695,
-      "calls": 74,
-      "tool_calls": 113,
-      "screenshots": 14,
-      "compactions": 1,
-      "commits": 3,
-      "code_kb": 19.2,
-      "code_lines": 591
-    },
-    "prompt_changes": [],
-    "engine": {
-      "requests": 86,
-      "decode_tokens": 125280,
-      "decode_tps": 117.85018349982855,
-      "prompt_tokens": 647479,
-      "prompt_tps": 1156.4203665608895,
-      "draft_accept": 0.4511090862496085
-    }
+    "engine": null,
+    "note": "Input includes cache reads and cache creation. Repeated transcript fragments were counted once per API response."
   }
 }

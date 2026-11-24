@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Snake Game</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./node_modules/three/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Top Score HUD -->
+    <header id="hud">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span id="score-val" class="hud-value">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">High Score</span>
+        <span id="high-score-val" class="hud-value">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Length</span>
+        <span id="length-val" class="hud-value">3</span>
+      </div>
+    </header>
+
+    <!-- Controls Tip -->
+    <div id="controls-hint">
+      <span>Move:</span>
+      <div class="key-group">
+        <span class="key-badge">W</span>
+        <span class="key-badge">A</span>
+        <span class="key-badge">S</span>
+        <span class="key-badge">D</span>
+      </div>
+      <span>or</span>
+      <div class="key-group">
+        <span class="key-badge">▲</span>
+        <span class="key-badge">◄</span>
+        <span class="key-badge">▼</span>
+        <span class="key-badge">►</span>
+      </div>
+    </div>
+
+    <!-- Game Over Modal Overlay -->
+    <div id="game-over-screen">
+      <div class="modal-card">
+        <h1 class="modal-title">GAME OVER</h1>
+        <p class="modal-subtitle">The snake hit an obstacle!</p>
+        <div class="modal-stats">
+          <div class="stat-box">
+            <span class="stat-title">Final Score</span>
+            <span id="final-score" class="stat-number highlight">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-title">Best Score</span>
+            <span id="best-score" class="stat-number">0</span>
+          </div>
+        </div>
+        <button id="restart-btn" class="restart-btn">PLAY AGAIN</button>
+        <p class="restart-hint">Press <span class="key-badge">SPACE</span> or <span class="key-badge">ENTER</span> to restart</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

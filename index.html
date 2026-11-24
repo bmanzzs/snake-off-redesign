@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#10151b" />
-    <title>Snake-Off — The blind AI arcade</title>
+    <title>Snake-Off â€” The blind AI arcade</title>
     <meta
       name="description"
-      content="One prompt, six anonymous Snake games. Play the games, match each one to its AI model, and reveal the results."
+      content="One prompt, seven anonymous Snake games. Play the games, match each one to its AI model, and reveal the results."
     />
     <link rel="icon" href="assets/mark.svg" />
     <link rel="stylesheet" href="arcade.css" />
@@ -41,7 +41,7 @@
             <p id="pitch"></p>
             <div class="actions">
               <a class="btn primary" id="start" href="#play-A"
-                >▶ &nbsp; Start playtest</a
+                >â–¶ &nbsp; Start playtest</a
               ><button class="btn quiet" data-prompt>Read the prompt</button>
             </div>
           </div>
@@ -87,15 +87,31 @@
           >
             <table id="stats"></table>
           </div>
+          <details id="agents">
+            <summary>Gemini’s coding and browser agents</summary>
+            <div
+              class="tablewrap"
+              tabindex="0"
+              role="region"
+              aria-label="Gemini agent statistics"
+            >
+              <table id="agentStats"></table>
+            </div>
+          </details>
           <details>
             <summary>How to read the numbers</summary>
             <ul id="notes"></ul>
+            <a
+              class="btn quiet"
+              href="https://github.com/bmanzzs/snake-off-redesign/blob/main/AUDIT.md"
+              >Read the measurement audit</a
+            >
           </details>
         </section>
         <footer>
           <span class="brand"
             ><img src="assets/mark.svg" alt="" />Snake-Off</span
-          ><span>One prompt · Built with Three.js</span
+          ><span>One prompt Â· Built with Three.js</span
           ><a href="#top">Back to top</a>
         </footer>
       </main>
@@ -110,16 +126,16 @@
       </div>
       <div id="screen"></div>
       <div class="touchpad" aria-label="Touch steering">
-        <button data-key="Left" aria-label="Steer left">◀</button
-        ><button data-key="Up" aria-label="Steer up">▲</button
-        ><button data-key="Down" aria-label="Steer down">▼</button
-        ><button data-key="Right" aria-label="Steer right">▶</button>
+        <button data-key="Left" aria-label="Steer left">â—€</button
+        ><button data-key="Up" aria-label="Steer up">â–²</button
+        ><button data-key="Down" aria-label="Steer down">â–¼</button
+        ><button data-key="Right" aria-label="Steer right">â–¶</button>
       </div>
     </section>
     <dialog id="dialog" aria-labelledby="dTitle">
       <div class="dhead">
         <span class="eyebrow blue" id="dKicker"></span
-        ><button class="close" aria-label="Close dialog">×</button>
+        ><button class="close" aria-label="Close dialog">Ã—</button>
       </div>
       <h2 id="dTitle"></h2>
       <div id="dBody"></div>
