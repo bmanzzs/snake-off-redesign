@@ -75,7 +75,7 @@ function choose(letter) {
     item.setAttribute("aria-pressed", String(selected));
     const status = document.createElement("small");
     status.textContent = selected
-      ? "âœ“ Selected"
+      ? "\u2713 Selected"
       : owner
         ? "Move from " + owner
         : "Available";
@@ -108,19 +108,19 @@ function card(game) {
   const node = document.createElement("article");
   node.className = "card";
   node.innerHTML = `<a class="preview" href="#play-${l}" aria-label="Play Game ${l}"><img alt="" src="round-7/${l.toLowerCase()}/preview.webp"><span class="chip">${l}</span></a>
-    <div class="info"><div class="cardline"><h3>Game ${l}</h3><button class="fav" aria-label="Favorite Game ${l}" title="Favorite Game ${l}" aria-pressed="${favorite === l}">${favorite === l ? "â˜…" : "â˜†"}</button></div>
-    <p class="meta"></p><div class="cardfoot"><a class="btn" href="#play-${l}" aria-label="Play Game ${l}">â–¶ &nbsp;Play</a></div></div>`;
+    <div class="info"><div class="cardline"><h3>Game ${l}</h3><button class="fav" aria-label="Favorite Game ${l}" title="Favorite Game ${l}" aria-pressed="${favorite === l}">${favorite === l ? "\u2605" : "\u2606"}</button></div>
+    <p class="meta"></p><div class="cardfoot"><a class="btn" href="#play-${l}" aria-label="Play Game ${l}">\u25b6 &nbsp;Play</a></div></div>`;
   node.querySelector(".fav").addEventListener("click", () => {
     favorite = favorite === l ? null : l;
     save();
     for (const [index, star] of document.querySelectorAll(".fav").entries()) {
       const chosen = letters[index] === favorite;
       star.setAttribute("aria-pressed", String(chosen));
-      star.textContent = chosen ? "â˜…" : "â˜†";
+      star.textContent = chosen ? "\u2605" : "\u2606";
     }
   });
   node.querySelector(".meta").textContent = answer
-    ? answer.name + " Â· " + answer.harness
+    ? answer.name + " \u00b7 " + answer.harness
     : visited.has(l)
       ? "Visited"
       : "Unplayed";
@@ -129,7 +129,7 @@ function card(game) {
     verdict.className = "meta verdict";
     verdict.textContent = pick
       ? pick === answer.key
-        ? "âœ“ Correct"
+        ? "\u2713 Correct"
         : "Guessed " + NAMES[pick]
       : "No guess";
     node.querySelector(".cardfoot").append(verdict);
@@ -156,9 +156,9 @@ function render() {
   const next = letters.find((l) => !visited.has(l));
   $("#start").href = next ? "#play-" + next : "#arcade";
   $("#start").textContent = !visited.size
-    ? "â–¶  Start playtest"
+    ? "\u25b6  Start playtest"
     : next
-      ? "â–¶  Continue playtest"
+      ? "\u25b6  Continue playtest"
       : "Review your ballot";
   $("#reveal").textContent = revealed ? "Hide answers" : "Reveal results";
   $("#revealTitle").textContent = revealed
@@ -201,7 +201,7 @@ function route() {
     const prior = current;
     current = null;
     screen.replaceChildren();
-    document.title = "Snake-Off â€” The blind AI arcade";
+    document.title = "Snake-Off \u2014 The blind AI arcade";
     render();
     if (prior) {
       const tile = document.querySelector(
@@ -219,10 +219,10 @@ function route() {
   const index = letters.indexOf(current);
   const next = letters[index + 1];
   $("#playing").textContent =
-    "Game " + current + " Â· " + (index + 1) + "/" + letters.length;
-  $("#nextGame").textContent = next ? "Next game Â· " + next : "Review ballot";
+    "Game " + current + " \u00b7 " + (index + 1) + "/" + letters.length;
+  $("#nextGame").textContent = next ? "Next game \u00b7 " + next : "Review ballot";
   $("#nextGame").href = next ? "#play-" + next : "#arcade";
-  document.title = "Game " + current + " Â· Snake-Off";
+  document.title = "Game " + current + " \u00b7 Snake-Off";
   render();
   const frame = document.createElement("iframe");
   frame.title = "Game " + current;
@@ -321,7 +321,7 @@ async function loadResults() {
     const message = document.createElement("p");
     message.textContent =
       "The run data could not be loaded. Close this message and try Reveal results again.";
-    showDialog("RUN DATA", "Couldnâ€™t load results", message);
+    showDialog("RUN DATA", "Couldn\u2019t load results", message);
     return false;
   }
 }
